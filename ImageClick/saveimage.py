@@ -115,7 +115,7 @@ def main():
     # 세 번째 이미지 클릭 횟수를 사용자로부터 입력받음
     click_count3 = int(input("세 번째 이미지를 몇 번 클릭하시겠습니까? "))
 
- 
+  
 
     # 반복 실행
     for i in range(repeat_count):

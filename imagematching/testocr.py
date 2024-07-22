@@ -98,7 +98,7 @@ def is_nearby_position(pos1, pos2, tolerance=5):
 match_counter = 1
 
 # 엑셀 데이터 로드
-excel_file = "C:\\Users\\simoony\\auto\\imagematching\\auto.xlsx"
+excel_file = "C:\\Users\\simoony\\auto\\auto.xlsx"
 wb, sheet, targets = load_excel_targets(excel_file)
 
 # 이미 매칭된 좌표를 추적
