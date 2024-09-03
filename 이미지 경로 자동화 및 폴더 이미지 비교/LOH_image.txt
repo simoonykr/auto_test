@@ -1,0 +1,10 @@
+screenshot_A1.png 이미지가 동일함
+screenshot_A3.png 이미지가 동일함
+1.png 이미지가 동일함
+2.png 이미지가 동일하지 않음
+screenshot_A6.png 이미지가 동일함
+screenshot_A4.png 이미지가 동일함
+screenshot_A2.png 이미지가 동일함
+screenshot_A5.png 이미지가 동일함
+screenshot_A7.png 이미지가 동일함
+screenshot_A8.png 이미지가 동일함
