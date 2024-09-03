@@ -1,0 +1,89 @@
+주요 기능 및 코드 설명
+마우스 드래그로 영역 선택:
+
+get_selection_area 함수는 pynput.mouse 라이브러리를 사용하여 마우스 클릭 이벤트를 통해 사용자로부터 화면의 특정 영역을 선택받습니다. 사용자는 마우스로 드래그하여 캡처할 영역을 지정합니다.
+python
+
+def on_click(x, y, button, pressed):
+    global start_x, start_y, end_x, end_y, dragging
+    if pressed:
+        start_x, start_y = x, y
+        dragging = True
+    else:
+        end_x, end_y = x, y
+        dragging = False
+        return False
+
+def get_selection_area():
+    with mouse.Listener(on_click=on_click) as listener:
+        print("드래그하여 캡처 영역을 지정하세요. 시작하려면 마우스를 클릭하고, 끝내려면 마우스를 놓으세요.")
+        listener.join()
+    return (start_x, start_y, end_x, end_y)
+  
+화면 캡처 및 저장:
+capture_and_save_area 함수는 지정된 영역을 캡처하고, 그 이미지를 파일로 저장합니다.
+python
+
+def capture_and_save_area(area, filename):
+    screenshot = ImageGrab.grab(bbox=area)
+    screenshot.save(filename)
+이미지에서 위치 탐색 후 클릭:
+
+search_image_in_area 함수는 캡처한 이미지의 위치를 화면에서 찾아 반환합니다.
+click_image 함수는 지정된 횟수만큼 특정 위치를 클릭합니다.
+python
+
+def search_image_in_area(image_path, area, timeout=10):
+    start_time = time.time()
+    while time.time() - start_time < timeout:
+        location = pyautogui.locateCenterOnScreen(image_path, region=area, confidence=0.8)
+        if location:
+            return location
+        time.sleep(1)
+    return None
+
+def click_image(image_path, area, click_count, image_index):
+    location = search_image_in_area(image_path, area)
+    if location:
+        for _ in range(click_count):
+            pyautogui.click(location)
+            time.sleep(1)
+이미지를 엑셀에 저장:
+
+save_images_to_excel 함수는 저장한 이미지를 엑셀 파일에 삽입하여 각 이미지 파일의 경로를 지정한 셀에 추가합니다.
+python
+
+def save_images_to_excel(images_list, excel_path="Image_save.xlsx"):
+    wb = Workbook()
+    ws = wb.active
+    for index, image_path in enumerate(images_list, start=1):
+        if os.path.exists(image_path):
+            img = ExcelImage(image_path)
+            img.anchor = f'A{index*10}' 
+            ws.add_image(img)
+    wb.save(excel_path)
+    
+메인 루프:
+main 함수는 사용자로부터 반복 횟수와 각 이미지를 클릭할 횟수를 입력받고, 각각의 이미지를 캡처하고 지정된 횟수만큼 클릭한 후, 작업을 반복 실행합니다.
+python
+    
+
+def main():
+    repeat_count = int(input("프로세스를 몇 번 실행할까요? "))
+    images_list = []
+
+    # 이미지 캡처 및 클릭 횟수 설정
+    for index in range(1, 4):
+        print(f"{index}번째 이미지를 선택하세요.")
+        area = get_selection_area()
+        image_path = f"temp_screenshot{index}.png"
+        capture_and_save_area(area, image_path)
+        images_list.append(image_path)
+        click_count = int(input(f"{index}번째 이미지를 몇 번 클릭하시겠습니까? "))
+
+        for i in range(repeat_count):
+            print(f"\n반복 {i+1}/{repeat_count}")
+            click_image(image_path, area, click_count, index)
+    
+    # 엑셀 저장
+    save_images_to_excel(images_list)
